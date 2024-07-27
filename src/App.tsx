@@ -13,6 +13,15 @@ const ProtectedRoute: React.FC<{ element: React.ReactElement }> = ({ element }) 
 };
 
 const App: React.FC = () => {
+  useEffect(() => 
+  {
+    const html = document.querySelector('html');
+    if(html)
+    {
+        html.classList.remove('light');
+        html.classList.add('dark');
+    }
+  }, []);
   return (
     <AuthProvider>
       <Router>

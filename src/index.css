@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 /* HTML: <div class="loader"></div> */
-.loader {
+.loader 
+{
     width: 60px;
     aspect-ratio: 2;
     --_g: no-repeat radial-gradient(circle closest-side,#000 90%,#0000);
@@ -13,10 +14,30 @@
       var(--_g) 100% 50%;
     background-size: calc(100%/3) 50%;
     animation: l3 1s infinite linear;
-  }
-  @keyframes l3 {
+}
+.dark .loader
+{
+  --_g: no-repeat radial-gradient(circle closest-side,#dddddd 90%,rgb(23,23,23));
+}
+@keyframes l3 
+{
       20%{background-position:0%   0%, 50%  50%,100%  50%}
       40%{background-position:0% 100%, 50%   0%,100%  50%}
       60%{background-position:0%  50%, 50% 100%,100%   0%}
       80%{background-position:0%  50%, 50%  50%,100% 100%}
-  }
+}
+
+.hljs 
+{
+  background-color: #171c31 !important;
+}
+
+.dark code
+{
+  color: #DCDCDC;
+}
+
+code:not(.language-markup):not(.language-js)::before
+{
+  content: "" !important;
+}
