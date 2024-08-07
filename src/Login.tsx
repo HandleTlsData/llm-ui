@@ -42,7 +42,7 @@ const Login: React.FC = () =>
     };
 
     return (
-    <div className="mt-7 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-900 dark:border-neutral-700">
+    <div className="w-full max-w-md mx-auto p-6 mt-7 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-900 dark:border-neutral-700">
         {failedTokenAuth && (
         <div className="p-4 sm:p-7">
             <div className="mt-5">

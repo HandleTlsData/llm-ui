@@ -1,7 +1,7 @@
 import { useAuth } from './AuthContext';
-import { createRef, useState } from 'react';
+import { createRef, useEffect, useState } from 'react';
 import { Messages } from './Messages';
-import { ChatMessage, sendChatMessage } from './API';
+import { ChatMessage, sendChatMessage, getChatMessages } from './API';
 import { Sidebar, SidebarButton } from './Sidebar';
 
 
@@ -17,6 +17,8 @@ function MainChat()
     const [activeChatHistory, setActiveChatHistory] = useState<ChatMessage[]>([]);
     const [isChatBlocked, setIsChatBlocked] = useState<boolean>(false);
     const [textAreaData, setTextAreaData] = useState<OutgoingMessage>({text: '', image:''});
+    const [chatList, setChatList] = useState<number[]>([]);
+    const [inOverlay, setInOverlay] = useState<boolean>(false);
 
     const chatBoxRef = createRef<HTMLDivElement>();
     const sendMessageHandler = async () => 
@@ -55,9 +57,19 @@ function MainChat()
         }
     }
 
+    useEffect(() => 
+    {
+          (async function() {
+            const res = await getChatMessages(activeChatID);
+            if(res)
+                setActiveChatHistory(res);
+          })();
+    }, [activeChatID]);
+
+
     return (
 <div>
-<Sidebar activeChatID={activeChatID} setActiveChatID={setActiveChatID} setActiveChatHistory={setActiveChatHistory} />
+<Sidebar activeChatID={activeChatID} setActiveChatID={setActiveChatID} setActiveChatHistory={setActiveChatHistory} chatList={chatList} setChatList={setChatList} />
 {activeChatID && (<div className="relative h-screen w-full lg:ps-64">
   <div className="py-10 lg:py-14" ref={chatBoxRef}>
     <div className="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
@@ -85,7 +97,7 @@ function MainChat()
   </div>
 
   <div className="max-w-4xl mx-auto sticky bottom-0 z-10 p-3 sm:py-6" >
-   <SidebarButton />
+   <SidebarButton inOverlay={inOverlay} setInOverlay={setInOverlay} />
 
     <div className="relative" >
       <textarea value={textAreaData.text} name="text" onChange={onChangeHandler} onKeyDown={onKeyDownHandler}
@@ -122,7 +134,7 @@ function MainChat()
 
 {!activeChatID && (
   <div className="relative h-screen w-full lg:ps-64">
-    <div className="py-10 lg:py-14">
+    <div className="w-full max-w-md mx-auto p-6 py-10 lg:py-14">
       <div className="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
         <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white">
           Welcome to llmback
@@ -131,6 +143,16 @@ function MainChat()
         UI powered by <p><a className="text-blue-600 underline decoration-gray-800 hover:opacity-80 focus:outline-none focus:opacity-80 dark:decoration-white" href="https://preline.co/">preline.co</a></p>
         </p>
       </div>
+      <ul className="space-y-1.5 p-12">
+        {chatList.length > 0 && chatList.map((entity, index) => (
+            <li key={index} onClick={(e)=>{setActiveChatID(entity); e.preventDefault()}}>
+                <a className={"flex items-center gap-x-3 py-2 px-3 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-300 dark:focus:bg-neutral-800 dark:focus:text-neutral-300 " + (activeChatID == entity ? 'bg-gray-100 dark:bg-neutral-800 dark:text-neutral-300' : '')} >
+                <p className="mt-3 text-gray-600 dark:text-neutral-400">Chat {entity}</p>
+                </a>
+            </li>
+        ))}
+      </ul>
+      <SidebarButton inOverlay={inOverlay} setInOverlay={setInOverlay} />
     </div>
   </div>
 )}
