@@ -35,9 +35,18 @@ export const FormattedText = ({ text }: FormattedTextProps) =>
     });
 
     const markText = (text: string) => {
-        const rawMarkup = marked.parse(text).toString();
-        const sanitizedMarkup = DOMPurify.sanitize(rawMarkup);
-        return { __html: sanitizedMarkup };
+        //temp fix
+        if(text.length > 5)
+        {
+            const rawMarkup = marked.parse(text).toString();
+            const sanitizedMarkup = DOMPurify.sanitize(rawMarkup);
+            return { __html: sanitizedMarkup };    
+        }
+        else
+        {
+            const sanitizedMarkup = DOMPurify.sanitize(text);
+            return { __html: sanitizedMarkup };    
+        }
     };
 
     const handleClick = (event: MouseEvent) => 
@@ -78,6 +87,6 @@ export const FormattedText = ({ text }: FormattedTextProps) =>
     }, [])
 
     return (
-    <p className="text-gray-800 dark:text-neutral-200" dangerouslySetInnerHTML={markText(text)}></p>
+        <p className="text-gray-800 dark:text-neutral-200" dangerouslySetInnerHTML={markText(text)}></p>
     );
 }
